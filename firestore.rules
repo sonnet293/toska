@@ -1,0 +1,55 @@
+rules_version = '2';
+// Firebase 콘솔 > Firestore > 규칙 에 붙여넣기 (기존 users 규칙이 있다면 합쳐서 사용)
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isGm() {
+      return signedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'gm';
+    }
+    function game(sid) { return get(/databases/$(database)/documents/games/$(sid)).data; }
+    function isPlayer(sid) {
+      return signedIn() && (game(sid).p1.uid == request.auth.uid || game(sid).p2.uid == request.auth.uid);
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow write: if isGm();
+    }
+
+    // 대기실: 로그인한 사용자 누구나 입장/준비
+    match /rooms/{roomId} {
+      allow read, write: if signedIn();
+    }
+
+    match /games/{sid} {
+      allow read: if signedIn();
+      allow write: if isGm();  // 게임 상태는 GM만 기록
+
+      match /rounds/{round} {
+        allow read: if signedIn();
+        allow write: if isGm();
+      }
+
+      // 선택한 행동: 본인과 GM만 읽을 수 있음 (상대가 미리 볼 수 없음)
+      match /actions/{slot} {
+        allow read: if isGm() || (signedIn() && resource.data.uid == request.auth.uid);
+        allow create, update: if signedIn()
+          && (slot == 'p1' || slot == 'p2')
+          && request.resource.data.uid == request.auth.uid
+          && game(sid)[slot].uid == request.auth.uid
+          && game(sid).status == 'active';
+        allow delete: if isGm();
+      }
+
+      match /chat/{msgId} {
+        allow read: if signedIn();
+        allow create: if isPlayer(sid) && request.resource.data.uid == request.auth.uid;
+      }
+
+      match /spectatorChat/{msgId} {
+        allow read: if signedIn();
+        allow create: if signedIn() && !isPlayer(sid) && request.resource.data.uid == request.auth.uid;
+      }
+    }
+  }
+}

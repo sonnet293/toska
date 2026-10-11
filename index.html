@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>로그인</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <h1>로그인</h1>
+  <form id="login-form" class="login">
+    <input id="email" type="email" placeholder="이메일" required autocomplete="username" />
+    <input id="password" type="password" placeholder="비밀번호" required autocomplete="current-password" />
+    <button type="submit">로그인</button>
+    <p id="error" class="error"></p>
+  </form>
+
+  <script type="module">
+    import { auth } from "./js/firebase.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) location.href = "main.html";
+    });
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        location.href = "main.html";
+      } catch (err) {
+        document.getElementById("error").textContent = "로그인 실패: " + err.code;
+      }
+    });
+  </script>
+</body>
+</html>

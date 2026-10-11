@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>배틀룸 1</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header>
+    <a href="../main.html">← 로비</a>
+    <h1 id="room-name">배틀룸</h1>
+    <span id="status">불러오는 중...</span>
+  </header>
+
+  <main class="game">
+    <section>
+      <div class="panels">
+        <div class="panel" id="panel-p1"></div>
+        <div class="panel" id="panel-p2"></div>
+      </div>
+
+      <div id="stage" class="stage"><span class="muted">양측이 행동을 선택하면 동시에 공개됩니다.</span></div>
+
+      <div id="controls">
+        <div id="actions" class="actions"></div>
+        <p id="my-status"></p>
+      </div>
+
+      <h3>전투 기록</h3>
+      <div id="battle-log" class="battle-log"></div>
+    </section>
+
+    <section>
+      <div class="chat">
+        <h3>플레이어 채팅</h3>
+        <div id="chat-player" class="chat-list"></div>
+        <form id="form-player"><input maxlength="500" placeholder="메시지 입력" /><button>전송</button></form>
+      </div>
+      <div class="chat">
+        <h3>관전자 채팅</h3>
+        <div id="chat-spectator" class="chat-list"></div>
+        <form id="form-spectator"><input maxlength="500" placeholder="메시지 입력" /><button>전송</button></form>
+      </div>
+      <p class="muted">일반 지문 · <span class="chat-action">(행동 지문)</span> · <b>@마법 지문</b></p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initGame } from "../js/game.js";
+    initGame("battleroom1");
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>로비</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>로비</h1>
+    <span id="me"></span>
+    <a id="gm-link" href="gm/index.html" hidden>GM 서버</a>
+    <button id="logout">로그아웃</button>
+  </header>
+
+  <ul id="rooms" class="room-list"></ul>
+
+  <script type="module">
+    import { db } from "./js/firebase.js";
+    import { requireUser, logout, esc, ROOMS, ROOM_NAMES, EMPTY_ROOM } from "./js/common.js";
+    import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const me = await requireUser("index.html");
+    document.getElementById("me").textContent = `${me.nickname} 님`;
+    document.getElementById("gm-link").hidden = me.role !== "gm";
+    document.getElementById("logout").onclick = () => logout("index.html");
+
+    const rooms = {};
+    const render = () => {
+      document.getElementById("rooms").innerHTML = ROOMS.map((id) => {
+        const r = { ...EMPTY_ROOM, ...rooms[id] };
+        const players = [r.player1, r.player2].filter(Boolean).map((p) => esc(p.nickname)).join(" vs ") || "비어 있음";
+        const spec = Object.keys(r.spectators || {}).length;
+        const status = r.status === "playing" ? "전투 중" : "대기 중";
+        return `<li><a href="pages/${id}.html">${ROOM_NAMES[id]}</a>
+          <span>[${status}]</span> <span>${players}</span> <span class="muted">관전 ${spec}</span></li>`;
+      }).join("");
+    };
+    render();
+    onSnapshot(collection(db, "rooms"), (snap) => {
+      snap.forEach((d) => (rooms[d.id] = d.data()));
+      render();
+    });
+  </script>
+</body>
+</html>

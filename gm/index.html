@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GM 서버</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header>
+    <a href="../main.html">← 로비</a>
+    <h1>GM 배틀 서버</h1>
+    <button id="logout">로그아웃</button>
+  </header>
+  <p id="gm-status">확인 중...</p>
+
+  <table class="gm-table">
+    <thead><tr><th>방</th><th>플레이어</th><th>상태</th><th></th></tr></thead>
+    <tbody id="rooms"></tbody>
+  </table>
+
+  <h3>판정 로그</h3>
+  <ul id="gm-log" class="gm-log"></ul>
+
+  <script type="module" src="gm.js"></script>
+</body>
+</html>

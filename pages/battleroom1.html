@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>배틀룸 1 대기실</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header>
+    <a href="../main.html">← 로비</a>
+    <h1 id="room-name">대기실</h1>
+  </header>
+
+  <p id="my-role">입장 중...</p>
+  <div class="slot" id="slot-player1"></div>
+  <div class="slot" id="slot-player2"></div>
+  <button id="ready-btn" hidden>준비</button>
+  <button id="leave-btn">나가기</button>
+
+  <h3>관전자</h3>
+  <ul id="spectators"></ul>
+
+  <script type="module">
+    import { initWaitRoom } from "../js/waitroom.js";
+    initWaitRoom("battleroom1");
+  </script>
+</body>
+</html>
